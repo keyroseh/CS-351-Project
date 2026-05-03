@@ -1,14 +1,220 @@
+<!-- CS 351 — Web Development | Tracklist Project
+     Main HTML: single page app, login + app sections -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset = "UTF-8">
-    <title>CS 351 Project</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracklist</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Objective: Think of an idea</h1>
 
-    <script src="script.js"></script>
+  <!-- Loading Overlay: shown whenever we're waiting on an API call.
+       script.js calls showLoading() / hideLoading() to toggle it. -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-msg">Loading…</p>
+  </div>
+
+  <!-- Zip Code Popup: appears after login to get the user's location -->
+  <div id="zip-popup" class="hidden">
+    <div class="zip-popup-box">
+      <div class="zip-popup-scanline"></div>
+      <div class="zip-popup-content">
+        <p class="zip-popup-label">Enter your zip code</p>
+        <p class="zip-popup-sub">We'll use this to find concerts near you</p>
+        <input type="text" id="zip-input" placeholder="e.g. 90210" maxlength="5" />
+        <button id="zip-submit-btn">Find Concerts</button>
+        <p id="zip-error" class="zip-error hidden">Invalid zip code. Please try again.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Section: shown by default, hidden once the user authenticates.
+       script.js adds the "hidden" class after login succeeds. -->
+  <section id="login-section">
+
+    <p class="login-eyebrow">Find your next show</p>
+
+    <!-- Green border box with scanline texture around the headline -->
+    <div class="headline-box">
+      <h1 class="login-headline">TRACKLIST</h1>
+    </div>
+
+    <p class="login-sub">
+      Connect your Spotify account and we'll find concerts near you
+      based on the artists you actually listen to.
+    </p>
+
+    <!-- Spotify login button -->
+    <button id="login-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+      </svg>
+      Connect with Spotify
+    </button>
+
+    <!-- How it works — SVG icons, no emoji -->
+    <div class="how-it-works">
+      <div class="how-step">
+        <!-- Music note icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/>
+          <circle cx="18" cy="16" r="3"/>
+        </svg>
+        <span>We read your top artists</span>
+      </div>
+      <div class="how-step">
+        <!-- Location pin icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8.69 2 6 4.69 6 8c0 5.25 6 13 6 13s6-7.75 6-13c0-3.31-2.69-6-6-6z"/>
+          <circle cx="12" cy="8" r="2.5"/>
+        </svg>
+        <span>We find your location</span>
+      </div>
+      <div class="how-step">
+        <!-- Ticket icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="2" y="6" width="20" height="12" rx="1"/>
+          <path d="M14 6v2M14 16v2M14 10v4"/>
+        </svg>
+        <span>We surface nearby shows</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- App Section: hidden by default, shown after the user logs in. -->
+  <section id="app-section" class="hidden">
+
+    <!-- Header: TL badge + API credits + meta -->
+    <header>
+      <div class="header-left">
+
+        <!-- TL stamp badge -->
+        <div class="tl-badge">
+          <span class="tl-text">TL</span>
+        </div>
+
+        <div class="header-divider"></div>
+
+        <!-- API credits -->
+        <div class="api-credits">
+          <span class="api-label">Uses APIs from</span>
+          <div class="api-logos">
+            <!-- Spotify -->
+            <div class="api-logo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#1db954">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+              </svg>
+              <span>SPOTIFY</span>
+            </div>
+            <!-- Ticketmaster -->
+            <div class="api-logo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#026cdf">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+              </svg>
+              <span>TICKETMASTER</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right side: location + saved count -->
+      <div class="header-meta">
+        <div class="meta-item">
+          <!-- Location pin -->
+          <svg width="12" height="14" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 1C3.79 1 2 2.79 2 5c0 3.25 4 9 4 9s4-5.75 4-9c0-2.21-1.79-4-4-4z"/>
+            <circle cx="6" cy="5" r="1.5"/>
+          </svg>
+          <span id="location-status">Locating…</span>
+        </div>
+        <div class="meta-item">
+          <!-- Ticket icon -->
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <rect x="1" y="1" width="14" height="10" rx="1"/>
+            <path d="M10 1v2M10 9v2M10 5v2"/>
+          </svg>
+          <span>Saved: <span class="fav-badge" id="fav-count">0</span></span>
+        </div>
+
+        <!-- Logout button -->
+        <button id="logout-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="app-section-inner">
+
+      <!-- Smaller TRACKLIST banner — same style as login but compact -->
+      <div class="app-headline-box">
+        <div class="app-headline-inner">
+          <div class="app-headline-scanline"></div>
+          <p class="app-headline">TRACKLIST</p>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <div class="control-group">
+          <!-- Radius icon -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+          <label for="radius-slider">Radius:</label>
+          <input type="range" id="radius-slider" min="10" max="150" value="25" step="5" />
+          <span id="radius-label">25 mi</span>
+        </div>
+
+        <div class="control-group">
+          <!-- Clock icon -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <label for="time-range-select">Taste:</label>
+          <select id="time-range-select">
+            <option value="long_term">All time</option>
+            <option value="medium_term">Last 6 months</option>
+            <option value="short_term">Last 4 weeks</option>
+          </select>
+        </div>
+
+        <!-- Refresh button -->
+        <button id="refresh-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 4v6h6"/>
+            <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Top Artists -->
+      <p class="section-label">Your top artists</p>
+      <div id="artists-grid"></div>
+
+      <!-- Concerts -->
+      <p class="section-label">Concerts near you</p>
+      <div id="concerts-grid"></div>
+
+    </main>
+
+  </section>
+
+  <script src="script.js"></script>
+
 </body>
 </html>
