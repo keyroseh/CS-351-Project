@@ -13,6 +13,9 @@ A full-stack web app that recommends nearby concerts based on your Spotify liste
 ### After Login
 
 ![Tracklist App View](AfterLogin.png)
+### Demo
+
+https://github.com/user-attachments/assets/1500fe5e-29d1-4d84-ac83-b1de436ada97
 
 ---
 
@@ -137,7 +140,7 @@ tracklist/
 
 ## Notes
 
-- The `.env` file is excluded from version control via `.gitignore` — never commit your API keys
+- IMPORTANT ⚠️⚠️⚠️ The `.env` file is excluded from version control via `.gitignore` — never commit your API keys ⚠️⚠️⚠️
 - Spotify requires you to add yourself as a user under **Users and Access** in your app dashboard while in development mode
 - Concert images are provided by Ticketmaster and may vary in quality
 
