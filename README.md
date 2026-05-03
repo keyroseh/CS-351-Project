@@ -57,7 +57,7 @@ https://github.com/user-attachments/assets/1500fe5e-29d1-4d84-ac83-b1de436ada97
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/tracklist.git
+git clone https://github.com/keyroseh/CS-351-Project
 cd tracklist
 ```
 
