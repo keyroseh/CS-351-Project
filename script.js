@@ -5,7 +5,7 @@
    geolocation, Ticketmaster concert search, DOM rendering, and favorites. */
 
 /* Config: Spotify Client ID is safe to expose on the frontend. Secret stays on the backend. */
-const SPOTIFY_CLIENT_ID    = 'd6758fd563d040c4b4094041e90a8e0f'; // replace with your actual client ID
+const SPOTIFY_CLIENT_ID    = 'your_spotify_client_id'; // replace with your actual client ID
 const SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:3000/callback';
 const SCOPES               = 'user-top-read';
 const API_BASE             = 'http://127.0.0.1:3000';
