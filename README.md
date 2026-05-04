@@ -15,6 +15,8 @@ A full-stack web app that recommends nearby concerts based on your Spotify liste
 ![Tracklist App View](AfterLogin.png)
 ### Demo
 
+https://github.com/user-attachments/assets/86a93cd7-f72b-43ab-93a1-07a82d788b0f
+
 ---
 
 ## Features
